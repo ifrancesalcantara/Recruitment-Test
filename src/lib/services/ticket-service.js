@@ -4,7 +4,8 @@ require("dotenv").config()
 const baseURL="https://pnny0h3cuf.execute-api.eu-west-1.amazonaws.com/dev/providers"
 const eventId=1
 const headers={
-  Authorization: AUTH_TOKEN
+  //!!! Set dotenv to: Authorization: process.env.AUTH_TOKEN
+  Authorization: "Basic cJmAc71jah17sgqi1jqaksvaksda="
 }
 
 class ticketsService {

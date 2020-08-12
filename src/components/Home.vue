@@ -43,7 +43,10 @@
 
     <p class="tkt-results">{{getFilteredTickets?getFilteredTickets.length:0}} resultados</p>
     
-    <v-container v-if="showAdvancedSearch">
+    <v-container 
+      v-if="showAdvancedSearch"
+      class="mt-3"
+      >
       <v-row class="d-flex justify-space-around">
         <v-menu 
         close-on-click
@@ -54,7 +57,6 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="primary"
               dark
               v-bind="attrs"
               v-on="on"
@@ -72,6 +74,25 @@
             </v-list-item>
           </v-list>
         </v-menu>
+
+        <v-btn 
+          fab 
+          small 
+          class="red lighten-1"
+          @click="resetAdvancedSearch"
+          >
+          <v-icon small>mdi-reload</v-icon>
+        </v-btn>
+
+        <v-btn 
+          fab 
+          small 
+          class="red lighten-1"
+          @click="closeAdvancedSearch"
+          >
+          <v-icon small>mdi-close</v-icon>
+        </v-btn>
+
       </v-row>
     </v-container>
 
@@ -115,7 +136,15 @@ import {timeSince} from "../lib/helpers/timeSince.js"
 
 export default {
   name: 'Home',
-  props: ["tickets", "filterOptions", "navOptions", "showAdvancedSearch", "advancedSearchOptions"],
+  props: [
+    "tickets", 
+    "filterOptions", 
+    "navOptions", 
+    "showAdvancedSearch", 
+    "advancedSearchOptions",
+    "resetAdvancedSearch",
+    "closeAdvancedSearch"
+    ],
   methods: {
     isLoaded(){return this.tickets&&this.tickets.length},
     isLoading(){return this.tickets?false:true},

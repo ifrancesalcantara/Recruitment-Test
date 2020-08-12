@@ -8,6 +8,8 @@
     v-bind:navOptions="navOptions" 
     v-bind:showAdvancedSearch="showAdvancedSearch"
     v-bind:advancedSearchOptions="advancedSearchOptions"
+    v-bind:resetAdvancedSearch="resetAdvancedSearch"
+    v-bind:closeAdvancedSearch="closeAdvancedSearch"
     />
   </v-app>
 </template>
@@ -36,13 +38,13 @@ export default {
       showAdvancedSearch: false,
       advancedSearchOptions: [
         {
-          name: "uses",
+          name: "total_uses",
           text: "Usos",
           getFunc:"getAllUses",
           list: [],
           onClick:(e=>{this.filterOptions.total_uses = parseInt(e.target.textContent)})
         },{
-          name: "group",
+          name: "access_group_name",
           text: "Grupo",
           getFunc:"getFilteredTickets",
           list:[],
@@ -51,13 +53,24 @@ export default {
       ],
       filteredTickets: null,
       filterOptions:{
-        name:"",
+        name:"",        
         total_uses: null,
         access_group_name: null
       },
       findAllAdvancedSearchLists: ()=>{
-        this.advancedSearchOptions.find(option=>option.name==="uses").list=this.getAllDifferentValues("total_uses")
-        this.advancedSearchOptions.find(option=>option.name==="group").list=this.getAllDifferentValues("access_group_name")
+        this.advancedSearchOptions.find(option=>option.name==="total_uses").list=this.getAllDifferentValues("total_uses")
+        this.advancedSearchOptions.find(option=>option.name==="access_group_name").list=this.getAllDifferentValues("access_group_name")
+      },
+      resetAdvancedSearch:()=>{
+        Object.keys(this.filterOptions).forEach(option=>{
+          if(option!=="name"){
+            this.filterOptions[option]=null
+          }
+        })
+      },
+      closeAdvancedSearch:()=>{
+        this.showAdvancedSearch = false;
+        this.resetAdvancedSearch()
       },
       getAllDifferentValues: (propName)=>{
         if(this.tickets&&this.tickets.length){
