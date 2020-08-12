@@ -6,7 +6,6 @@
       dark 
       fixed
       hide-on-scroll
-      class="app-bar"
       >
       <v-menu
         left
@@ -57,7 +56,6 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              dark
               v-bind="attrs"
               v-on="on"
             >
@@ -190,14 +188,6 @@ export default {
 
 <style scoped>
 
-  .view{
-    padding:0
-  }
-
-  .app-bar{
-    position:fixed;
-  }
-
   .searchbar {
     height: inherit;
     width: 27%;
@@ -209,10 +199,6 @@ export default {
   .searchbar:focus{
     background-color: #2c2c2cbd;
     outline-width: 0;
-  }
-
-  .wrapper{
-    margin: 10px 20px;
   }
 
   .tkt-results{
@@ -249,7 +235,7 @@ export default {
     font-weight: 600;
   }
 
-  .time-ago{
+  .time-ago {
     text-align: right;
     font-size: .8em;
   }
