@@ -24,11 +24,11 @@
 
         <v-list>
           <v-list-item
-            v-for="n in 5"
-            :key="n"
-            @click="() => {}"
+            v-for="(navOption, index) in navOptions"
+            :key="index"
+            @click="navOption.onClick"
           >
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
+            <v-list-item-title>{{navOption.text}}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -40,8 +40,43 @@
       </v-btn>
     </v-app-bar>
 
+
     <p class="tkt-results">{{getFilteredTickets?getFilteredTickets.length:0}} resultados</p>
     
+    <v-container v-if="showAdvancedSearch">
+      <v-row class="d-flex justify-space-around">
+        <v-menu 
+        close-on-click
+        close-on-content-click
+        max-height="90%"
+        v-for="advancedSearchOption in advancedSearchOptions" 
+        :key="advancedSearchOption.name"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{advancedSearchOption.text}}
+            </v-btn>
+          </template>
+          <v-list scroll>
+            <v-list-item
+              v-for="(item, index) in advancedSearchOption.list"
+              :key="index"
+              @click="advancedSearchOption.onClick"
+            >
+              <v-list-item-title>{{ item.value }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-row>
+    </v-container>
+
+
+
     <v-container v-if="isLoaded()&&getFilteredTickets.length">
       <v-row class="d-flex flex-wrap justify-space-around">
         <v-col
@@ -80,7 +115,7 @@ import {timeSince} from "../lib/helpers/timeSince.js"
 
 export default {
   name: 'Home',
-  props: ["tickets", "filterOptions"],
+  props: ["tickets", "filterOptions", "navOptions", "showAdvancedSearch", "advancedSearchOptions"],
   methods: {
     isLoaded(){return this.tickets&&this.tickets.length},
     isLoading(){return this.tickets?false:true},
@@ -90,6 +125,9 @@ export default {
     updateNameFilter(e){
       this.filterOptions.name=e.target.value
     },
+    updateUseFilter(e){
+      this.filterOptions.use=e
+    },
     focusSearchbar(){
       document.querySelector(".searchbar").focus()
     }
@@ -97,7 +135,24 @@ export default {
   computed:{
     getFilteredTickets(){
       if(this.tickets&&this.tickets.length){
-        return this.tickets.filter(ticket=>ticket.name.toLowerCase().includes(this.filterOptions.name.toLowerCase()))
+        return this.tickets.filter(ticket=>{
+          let result = true
+          Object.keys(this.filterOptions).forEach(option=>{
+            if(option==="name"){
+              if(!ticket.name.toLowerCase().includes(this.filterOptions[option].toLowerCase())){
+                result=false
+              }
+            }
+            else {
+              if(this.filterOptions[option]!==null){
+                if(ticket[option]!==this.filterOptions[option]){result=false}
+              }
+            }
+          });
+          return result
+        }
+          
+        )
       } return null
     }
   }

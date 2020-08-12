@@ -1,9 +1,10 @@
 import axios from "axios";
+require("dotenv").config()
 
 const baseURL="https://pnny0h3cuf.execute-api.eu-west-1.amazonaws.com/dev/providers"
 const eventId=1
 const headers={
-  Authorization: "Basic cJmAc71jah17sgqi1jqaksvaksda="
+  Authorization: AUTH_TOKEN
 }
 
 class ticketsService {

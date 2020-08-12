@@ -1,7 +1,14 @@
 <template>
-
   <v-app>
-    <Home v-bind:tickets="tickets" v-bind:filterOptions="filterOptions"/>
+    <!-- !!! Should use router-view inside v-main passing prop tickets-->
+    <Home 
+    v-bind:tickets="tickets" 
+    v-bind:filteredTickets="filteredTickets" 
+    v-bind:filterOptions="filterOptions" 
+    v-bind:navOptions="navOptions" 
+    v-bind:showAdvancedSearch="showAdvancedSearch"
+    v-bind:advancedSearchOptions="advancedSearchOptions"
+    />
   </v-app>
 </template>
 
@@ -18,13 +25,62 @@ export default {
   data(){
     return {
       tickets: null,
+      navOptions:[
+        {
+          name: "showAdvancedSearch",
+          text: "Advanced Search",
+          onClick: ()=>{this.showAdvancedSearch=!this.showAdvancedSearch
+          }
+        }
+      ],
+      showAdvancedSearch: false,
+      advancedSearchOptions: [
+        {
+          name: "uses",
+          text: "Usos",
+          getFunc:"getAllUses",
+          list: [],
+          onClick:(e=>{this.filterOptions.total_uses = parseInt(e.target.textContent)})
+        },{
+          name: "group",
+          text: "Grupo",
+          getFunc:"getFilteredTickets",
+          list:[],
+          onClick:(e=>{this.filterOptions.access_group_name = e.target.textContent})
+        }
+      ],
+      filteredTickets: null,
       filterOptions:{
-        name:""
+        name:"",
+        total_uses: null,
+        access_group_name: null
+      },
+      findAllAdvancedSearchLists: ()=>{
+        this.advancedSearchOptions.find(option=>option.name==="uses").list=this.getAllDifferentValues("total_uses")
+        this.advancedSearchOptions.find(option=>option.name==="group").list=this.getAllDifferentValues("access_group_name")
+      },
+      getAllDifferentValues: (propName)=>{
+        if(this.tickets&&this.tickets.length){
+          const allDifferentValues=[]
+          this.tickets.forEach(ticket=>{
+            if(allDifferentValues.includes(ticket[propName])){
+              return false
+            } 
+            allDifferentValues.push(ticket[propName]);
+          })
+          return allDifferentValues.map(value=>{
+            return {
+              value: value,
+              onClick:()=>{this.filterOptions[propName]=value}
+            }
+          })
+        } return null
       }
     }
   },
   async created(){
     this.tickets = await ticketService.getTickets()
+    this.findAllAdvancedSearchLists()
   }
 }
 </script>
